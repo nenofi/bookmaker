@@ -20,8 +20,6 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
 
     mapping(address => uint256) public userShare;
 
-    error TransferFailed();
-
     constructor(address _neToken, string memory _name, string memory _symbol) ERC20(_name, _symbol){
         neToken = _neToken;
         isPaused = false;
@@ -43,6 +41,16 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
             shares = (_amount*totalSupply())/(_pool);
         }
         _mint(msg.sender, shares);
+    }
+
+    function withdraw(uint256 _shares) public {
+        uint256 amount = balance()*_shares/totalSupply();
+        _burn(msg.sender, _shares);
+        IERC20(neToken).transfer(msg.sender, amount);
+    }
+
+    function emergencyWithdraw(address _to, uint _amount) public {
+        IERC20(neToken).transfer(_to, _amount);
     }
 
 
