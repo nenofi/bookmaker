@@ -16,7 +16,6 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
 
     bool public isPaused;
     uint256 public vaultBalance;
-    uint256 public exchangeRate;
 
     mapping(address => uint256) public userShare;
 
@@ -27,6 +26,10 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
 
     function balance() public view returns(uint){
         return IERC20(neToken).balanceOf(address(this));
+    }
+
+    function getPricePerFullShare() public view returns (uint256) {
+        return totalSupply() == 0 ? 1e18 : (balance()*1e18)/totalSupply();
     }
 
     function deposit(uint _amount) public nonReentrant {
@@ -44,14 +47,21 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     }
 
     function withdraw(uint256 _shares) public {
+        require(isPaused == false, "NENOVAULT: VAULT IS PAUSED");
         uint256 amount = balance()*_shares/totalSupply();
         _burn(msg.sender, _shares);
         IERC20(neToken).transfer(msg.sender, amount);
     }
 
-    function emergencyWithdraw(address _to, uint _amount) public {
+    function emergencyWithdraw(address _to, uint _amount) public onlyOwner{
         IERC20(neToken).transfer(_to, _amount);
     }
 
+    function emergencyWithdrawToken(address _token, address _to, uint _amount) public onlyOwner{
+        IERC20(_token).transfer(_to, _amount);
+    }
 
+    function setPause(bool _isPaused) public onlyOwner{
+        isPaused = _isPaused;
+    }  
 }
