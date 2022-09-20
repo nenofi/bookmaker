@@ -142,7 +142,25 @@ contract NenoVaultV01Test is Test{
         // console.log("");
         vm.stopPrank();    
         assertGe(bobAfter, bobBefore);
+    }
+    
+    function testTransferToFundManager() public{
+        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        console.log(fundManagersBalBefore);
 
-        }
+        vm.startPrank(alice);
+        neIDR.mint(one_million);
+        neIDR.approve(address(nenoVaultV01), one_million);
+        nenoVaultV01.deposit(one_million);
+        vm.stopPrank();
+
+        vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        nenoVaultV01.transferToFundManager();
+        uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        console.log(fundManagersBalAfter);
+        vm.stopPrank();
+
+        assertGe(fundManagersBalAfter, fundManagersBalBefore);
+    }
 
 }

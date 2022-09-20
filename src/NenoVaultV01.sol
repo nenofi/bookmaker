@@ -13,15 +13,22 @@ import "forge-std/console.sol";
 
 contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     address public neToken;
+    address public fundManager;
 
     bool public isPaused;
     uint256 public vaultBalance;
 
     mapping(address => uint256) public userShare;
 
+    modifier onlyFundManager{
+        require(msg.sender == fundManager, "NENOVAULT: NOT FUND MANAGER");
+        _;
+    }
+
     constructor(address _neToken, string memory _name, string memory _symbol) ERC20(_name, _symbol){
         neToken = _neToken;
         isPaused = false;
+        fundManager = 0xC739B29c037808e3B9bB3d33d57F1cf0525d7445;
     }
 
     function balance() public view returns(uint){
@@ -48,9 +55,19 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
 
     function withdraw(uint256 _shares) public {
         require(isPaused == false, "NENOVAULT: VAULT IS PAUSED");
-        uint256 amount = balance()*_shares/totalSupply();
+        uint256 amount = (balance()*_shares)/totalSupply();
         _burn(msg.sender, _shares);
         IERC20(neToken).transfer(msg.sender, amount);
+    }
+
+    function transferToFundManager() public onlyFundManager{
+        isPaused = true;
+        IERC20(neToken).transfer(fundManager, IERC20(neToken).balanceOf(address(this)));
+    }
+
+    function depositForFundManager(uint256 _amount) public onlyFundManager{
+        IERC20(neToken).transferFrom(msg.sender, address(this), _amount);
+        isPaused = false;
     }
 
     function emergencyWithdraw(address _to, uint _amount) public onlyOwner{
