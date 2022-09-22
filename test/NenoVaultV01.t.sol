@@ -148,7 +148,7 @@ contract NenoVaultV01Test is Test{
         vm.startPrank(alice);
         neIDR.mint(one_million);
         neIDR.approve(address(nenoVaultV01), one_million);
-        uint aliceBefore = neIDR.balanceOf(alice);
+        // uint aliceBefore = neIDR.balanceOf(alice);
         // console.log("ALICE DEPOSITS");
         nenoVaultV01.deposit(one_million);
         console.log(nenoVaultV01.getPricePerFullShare());
@@ -161,7 +161,7 @@ contract NenoVaultV01Test is Test{
         vm.startPrank(bob);
         neIDR.mint(five_million);
         neIDR.approve(address(nenoVaultV01), five_million);
-        uint bobBefore = neIDR.balanceOf(bob);
+        // uint bobBefore = neIDR.balanceOf(bob);
         // console.log("BOB DEPOSITS");
         nenoVaultV01.deposit(five_million);
         console.log(nenoVaultV01.getPricePerFullShare());
@@ -209,12 +209,12 @@ contract NenoVaultV01Test is Test{
         nenoVaultV01.deposit(one_million);
         vm.stopPrank();
 
-        // vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
         nenoVaultV01.transferToFundManager();
         uint fundManagersBalAfter = neIDR.balanceOf(address(this));
         // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
         console.log(fundManagersBalAfter);
-        // vm.stopPrank();
+        vm.stopPrank();
 
         assertGe(fundManagersBalAfter, fundManagersBalBefore);
     }

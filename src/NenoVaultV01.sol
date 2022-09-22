@@ -7,10 +7,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
-// import "../test/MockERC20.sol";
-// import "forge-std/console.sol";
-
-
 contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     address public neToken;
     address public fundManager;
@@ -28,11 +24,11 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     constructor(address _neToken, string memory _name, string memory _symbol) ERC20(_name, _symbol){
         neToken = _neToken;
         isPaused = false;
-        fundManager = msg.sender;
+        fundManager = 0xC739B29c037808e3B9bB3d33d57F1cf0525d7445;
     }
 
     function balance() public view returns(uint){
-        return IERC20(neToken).balanceOf(address(this));
+        return IERC20(neToken).balanceOf(address(this)) + IERC20(neToken).balanceOf(fundManager);
     }
 
     function getPricePerFullShare() public view returns (uint256) {
