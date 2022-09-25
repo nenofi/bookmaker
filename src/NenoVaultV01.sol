@@ -12,7 +12,6 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     address public fundManager;
 
     bool public isPaused;
-    uint256 public vaultBalance;
 
     mapping(address => uint256) public userShare;
 
@@ -63,7 +62,6 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
 
     function depositForFundManager(uint256 _amount) public onlyFundManager{
         IERC20(neToken).transferFrom(msg.sender, address(this), _amount);
-        isPaused = false;
     }
 
     function emergencyWithdraw(address _to, uint _amount) public onlyOwner{

@@ -6,14 +6,14 @@ import "../src/NenoVaultV01.sol";
 import "../src/test/MockERC20.sol";
 
 import "forge-std/console.sol";
-import "forge-std/Vm.sol";
+// import "forge-std/Vm.sol";
 
 
 
-interface CheatCodes {
-   // Gets address for a given private key, (privateKey) => (address)
-   function addr(uint256) external returns (address);
-}
+// interface CheatCodes {
+//    // Gets address for a given private key, (privateKey) => (address)
+//    function addr(uint256) external returns (address);
+// }
 
 contract NenoVaultV01Test is Test{
     NenoVaultV01 public nenoVaultV01;
@@ -28,7 +28,7 @@ contract NenoVaultV01Test is Test{
 
 
 
-    CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
+    // CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
 
     function setUp() public{
         neIDR = new MockERC20("neRupiah", "neIDR");
@@ -217,6 +217,26 @@ contract NenoVaultV01Test is Test{
         vm.stopPrank();
 
         assertGe(fundManagersBalAfter, fundManagersBalBefore);
+    }
+
+    function testTransferToFundManagerUnauthorized() public{
+        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        console.log(fundManagersBalBefore);
+
+        vm.startPrank(alice);
+        neIDR.mint(one_million);
+        neIDR.approve(address(nenoVaultV01), one_million);
+        nenoVaultV01.deposit(one_million);
+        vm.stopPrank();
+
+        vm.expectRevert('NENOVAULT: NOT FUND MANAGER');
+        vm.startPrank(bob);
+        nenoVaultV01.transferToFundManager();
+        uint fundManagersBalAfter = neIDR.balanceOf(address(this));
+        // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        console.log(fundManagersBalAfter);
+        vm.stopPrank();
+
     }
 
 }
