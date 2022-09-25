@@ -43,7 +43,7 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
         if (totalSupply() == 0) {
             shares = _amount;
         } else {
-            shares = (_amount*totalSupply())/(_pool);
+            shares = (_amount*totalSupply())/(_pool); //*auto revert if funds are all utilized and a user tried to deposit
         }
         _mint(msg.sender, shares);
     }

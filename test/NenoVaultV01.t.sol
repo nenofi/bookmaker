@@ -229,13 +229,38 @@ contract NenoVaultV01Test is Test{
         nenoVaultV01.deposit(one_million);
         vm.stopPrank();
 
-        vm.expectRevert('NENOVAULT: NOT FUND MANAGER');
         vm.startPrank(bob);
+        vm.expectRevert('NENOVAULT: NOT FUND MANAGER');
         nenoVaultV01.transferToFundManager();
         uint fundManagersBalAfter = neIDR.balanceOf(address(this));
         // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
         console.log(fundManagersBalAfter);
         vm.stopPrank();
+
+    }
+
+    function testDepositWhenFundsAreUtilized() public{
+        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        console.log(fundManagersBalBefore);
+
+        vm.startPrank(alice);
+        neIDR.mint(one_million);
+        neIDR.approve(address(nenoVaultV01), one_million);
+        nenoVaultV01.deposit(one_million);
+        vm.stopPrank();
+
+        vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+        nenoVaultV01.transferToFundManager();
+        neIDR.transfer(bob, one_million);
+        vm.stopPrank();
+
+        /* BLOCK BELOW REVERTS*/
+
+        // vm.startPrank(alice);
+        // neIDR.mint(one_million);
+        // neIDR.approve(address(nenoVaultV01), one_million);
+        // nenoVaultV01.deposit(one_million);
+        // vm.stopPrank();
 
     }
 
