@@ -35,6 +35,7 @@ contract NenoVaultV01 is ERC20, Ownable, ReentrancyGuard{
     }
 
     function deposit(uint _amount) public nonReentrant {
+        require(isPaused == false, "NENOVAULT: VAULT IS PAUSED");
         uint256 _pool = balance();
         IERC20(neToken).transferFrom(msg.sender, address(this), _amount);
         uint256 _after = balance();
