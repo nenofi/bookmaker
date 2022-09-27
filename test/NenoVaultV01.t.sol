@@ -1,267 +1,267 @@
-// SPDX-License-Identifier: UNLICENSED
+// // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
-import "../src/NenoVaultV01.sol";
-import "../src/test/MockERC20.sol";
+// import "forge-std/Test.sol";
+// import "../src/NenoVaultV01.sol";
+// import "../src/test/MockERC20.sol";
 
-import "forge-std/console.sol";
-// import "forge-std/Vm.sol";
-
-
-
-// interface CheatCodes {
-//    // Gets address for a given private key, (privateKey) => (address)
-//    function addr(uint256) external returns (address);
-// }
-
-contract NenoVaultV01Test is Test{
-    NenoVaultV01 public nenoVaultV01;
-    MockERC20 public neIDR;
-    uint256 public constant one_million = 1000000e18;
-    uint256 public constant five_million = 5000000e18;
-
-    // address payable[] internal users;
-    address internal alice = address(0x1);
-    address internal bob = address(0x2);
-    address internal admin = address(0x2);
+// import "forge-std/console.sol";
+// // import "forge-std/Vm.sol";
 
 
 
-    // CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
+// // interface CheatCodes {
+// //    // Gets address for a given private key, (privateKey) => (address)
+// //    function addr(uint256) external returns (address);
+// // }
 
-    function setUp() public{
-        neIDR = new MockERC20("neRupiah", "neIDR");
-        nenoVaultV01 = new NenoVaultV01(address(neIDR), "BookieRupiah", "bNeIDR");
-    }
+// contract NenoVaultV01Test is Test{
+//     NenoVaultV01 public nenoVaultV01;
+//     MockERC20 public neIDR;
+//     uint256 public constant one_million = 1000000e18;
+//     uint256 public constant five_million = 5000000e18;
 
-    function testVaultLoss() public{
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        uint aliceBefore = neIDR.balanceOf(alice);
-        // console.log("ALICE DEPOSITS");
-        nenoVaultV01.deposit(one_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
+//     // address payable[] internal users;
+//     address internal alice = address(0x1);
+//     address internal bob = address(0x2);
+//     address internal admin = address(0x2);
 
-        vm.startPrank(bob);
-        neIDR.mint(five_million);
-        neIDR.approve(address(nenoVaultV01), five_million);
-        uint bobBefore = neIDR.balanceOf(bob);
-        // console.log("BOB DEPOSITS");
-        nenoVaultV01.deposit(five_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
 
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();
 
-        nenoVaultV01.emergencyWithdraw(address(this),500000e18);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//     // CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
 
-        // console.log(nenoVaultV01.balance());
-        // console.log("");
+//     function setUp() public{
+//         neIDR = new MockERC20("neRupiah", "neIDR");
+//         nenoVaultV01 = new NenoVaultV01(address(neIDR), "BookieRupiah", "bNeIDR");
+//     }
 
-        vm.startPrank(alice);
-        // console.log("ALICE WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
-        // console.log(nenoVaultV01.balanceOf(alice));
-        uint aliceAfter = neIDR.balanceOf(alice);
-        // console.log(neIDR.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
-        assertLe(aliceAfter, aliceBefore);
+//     function testVaultLoss() public{
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         uint aliceBefore = neIDR.balanceOf(alice);
+//         // console.log("ALICE DEPOSITS");
+//         nenoVaultV01.deposit(one_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
 
-        vm.startPrank(bob);
-        // console.log("BOB WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
-        // console.log(nenoVaultV01.balanceOf(bob));
-        uint bobAfter = neIDR.balanceOf(bob);
-        // console.log(neIDR.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();
-        assertLe(bobAfter, bobBefore);
+//         vm.startPrank(bob);
+//         neIDR.mint(five_million);
+//         neIDR.approve(address(nenoVaultV01), five_million);
+//         uint bobBefore = neIDR.balanceOf(bob);
+//         // console.log("BOB DEPOSITS");
+//         nenoVaultV01.deposit(five_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-    }
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();
 
-    function testVaultProfit() public{
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        uint aliceBefore = neIDR.balanceOf(alice);
-        // console.log("ALICE DEPOSITS");
-        nenoVaultV01.deposit(one_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//         nenoVaultV01.emergencyWithdraw(address(this),500000e18);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
+//         // console.log(nenoVaultV01.balance());
+//         // console.log("");
 
-        vm.startPrank(bob);
-        neIDR.mint(five_million);
-        neIDR.approve(address(nenoVaultV01), five_million);
-        uint bobBefore = neIDR.balanceOf(bob);
-        // console.log("BOB DEPOSITS");
-        nenoVaultV01.deposit(five_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//         vm.startPrank(alice);
+//         // console.log("ALICE WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         uint aliceAfter = neIDR.balanceOf(alice);
+//         // console.log(neIDR.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
+//         assertLe(aliceAfter, aliceBefore);
 
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();
+//         vm.startPrank(bob);
+//         // console.log("BOB WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         uint bobAfter = neIDR.balanceOf(bob);
+//         // console.log(neIDR.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();
+//         assertLe(bobAfter, bobBefore);
 
-        neIDR.mint(one_million);
-        neIDR.transfer(address(nenoVaultV01), one_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//     }
 
-        // console.log(nenoVaultV01.balance());
-        console.log("");
+//     function testVaultProfit() public{
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         uint aliceBefore = neIDR.balanceOf(alice);
+//         // console.log("ALICE DEPOSITS");
+//         nenoVaultV01.deposit(one_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-        vm.startPrank(alice);
-        // console.log("ALICE WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
-        // console.log(nenoVaultV01.balanceOf(alice));
-        uint aliceAfter = neIDR.balanceOf(alice);
-        // console.log(neIDR.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
-        assertGe(aliceAfter, aliceBefore);
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
 
-        vm.startPrank(bob);
-        // console.log("BOB WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
-        // console.log(nenoVaultV01.balanceOf(bob));
-        uint bobAfter = neIDR.balanceOf(bob);
-        // console.log(neIDR.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();    
-        assertGe(bobAfter, bobBefore);
-    }
+//         vm.startPrank(bob);
+//         neIDR.mint(five_million);
+//         neIDR.approve(address(nenoVaultV01), five_million);
+//         uint bobBefore = neIDR.balanceOf(bob);
+//         // console.log("BOB DEPOSITS");
+//         nenoVaultV01.deposit(five_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-    function testVaultZero() public{
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        // uint aliceBefore = neIDR.balanceOf(alice);
-        // console.log("ALICE DEPOSITS");
-        nenoVaultV01.deposit(one_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();
 
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
+//         neIDR.mint(one_million);
+//         neIDR.transfer(address(nenoVaultV01), one_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-        vm.startPrank(bob);
-        neIDR.mint(five_million);
-        neIDR.approve(address(nenoVaultV01), five_million);
-        // uint bobBefore = neIDR.balanceOf(bob);
-        // console.log("BOB DEPOSITS");
-        nenoVaultV01.deposit(five_million);
-        console.log(nenoVaultV01.getPricePerFullShare());
+//         // console.log(nenoVaultV01.balance());
+//         console.log("");
 
-        // console.log(nenoVaultV01.balance());
-        // console.log(nenoVaultV01.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();
+//         vm.startPrank(alice);
+//         // console.log("ALICE WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         uint aliceAfter = neIDR.balanceOf(alice);
+//         // console.log(neIDR.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
+//         assertGe(aliceAfter, aliceBefore);
 
-        nenoVaultV01.emergencyWithdraw(address(this), neIDR.balanceOf(address(nenoVaultV01)));
-        console.log(nenoVaultV01.getPricePerFullShare());
+//         vm.startPrank(bob);
+//         // console.log("BOB WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         uint bobAfter = neIDR.balanceOf(bob);
+//         // console.log(neIDR.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();    
+//         assertGe(bobAfter, bobBefore);
+//     }
 
-        // console.log(nenoVaultV01.balance());
-        console.log("");
+//     function testVaultZero() public{
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         // uint aliceBefore = neIDR.balanceOf(alice);
+//         // console.log("ALICE DEPOSITS");
+//         nenoVaultV01.deposit(one_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
 
-        vm.startPrank(alice);
-        // console.log("ALICE WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
-        // console.log(nenoVaultV01.balanceOf(alice));
-        uint aliceAfter = neIDR.balanceOf(alice);
-        // console.log(neIDR.balanceOf(alice));
-        // console.log("");
-        vm.stopPrank();
-        assertEq(aliceAfter, 0);
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
 
-        vm.startPrank(bob);
-        // console.log("BOB WITHDRAWS");
-        nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
-        // console.log(nenoVaultV01.balanceOf(bob));
-        uint bobAfter = neIDR.balanceOf(bob);
-        // console.log(neIDR.balanceOf(bob));
-        // console.log("");
-        vm.stopPrank();    
-        assertEq(bobAfter, 0);
-    }
+//         vm.startPrank(bob);
+//         neIDR.mint(five_million);
+//         neIDR.approve(address(nenoVaultV01), five_million);
+//         // uint bobBefore = neIDR.balanceOf(bob);
+//         // console.log("BOB DEPOSITS");
+//         nenoVaultV01.deposit(five_million);
+//         console.log(nenoVaultV01.getPricePerFullShare());
+
+//         // console.log(nenoVaultV01.balance());
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();
+
+//         nenoVaultV01.emergencyWithdraw(address(this), neIDR.balanceOf(address(nenoVaultV01)));
+//         console.log(nenoVaultV01.getPricePerFullShare());
+
+//         // console.log(nenoVaultV01.balance());
+//         console.log("");
+
+//         vm.startPrank(alice);
+//         // console.log("ALICE WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(alice));
+//         // console.log(nenoVaultV01.balanceOf(alice));
+//         uint aliceAfter = neIDR.balanceOf(alice);
+//         // console.log(neIDR.balanceOf(alice));
+//         // console.log("");
+//         vm.stopPrank();
+//         assertEq(aliceAfter, 0);
+
+//         vm.startPrank(bob);
+//         // console.log("BOB WITHDRAWS");
+//         nenoVaultV01.withdraw(nenoVaultV01.balanceOf(bob));
+//         // console.log(nenoVaultV01.balanceOf(bob));
+//         uint bobAfter = neIDR.balanceOf(bob);
+//         // console.log(neIDR.balanceOf(bob));
+//         // console.log("");
+//         vm.stopPrank();    
+//         assertEq(bobAfter, 0);
+//     }
 
     
-    function testTransferToFundManager() public{
-        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        console.log(fundManagersBalBefore);
+//     function testTransferToFundManager() public{
+//         uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         console.log(fundManagersBalBefore);
 
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        nenoVaultV01.deposit(one_million);
-        vm.stopPrank();
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         nenoVaultV01.deposit(one_million);
+//         vm.stopPrank();
 
-        vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        nenoVaultV01.transferToFundManager();
-        uint fundManagersBalAfter = neIDR.balanceOf(address(this));
-        // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        console.log(fundManagersBalAfter);
-        vm.stopPrank();
+//         vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         nenoVaultV01.transferToFundManager();
+//         uint fundManagersBalAfter = neIDR.balanceOf(address(this));
+//         // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         console.log(fundManagersBalAfter);
+//         vm.stopPrank();
 
-        assertGe(fundManagersBalAfter, fundManagersBalBefore);
-    }
+//         assertGe(fundManagersBalAfter, fundManagersBalBefore);
+//     }
 
-    function testTransferToFundManagerUnauthorized() public{
-        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        console.log(fundManagersBalBefore);
+//     function testTransferToFundManagerUnauthorized() public{
+//         uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         console.log(fundManagersBalBefore);
 
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        nenoVaultV01.deposit(one_million);
-        vm.stopPrank();
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         nenoVaultV01.deposit(one_million);
+//         vm.stopPrank();
 
-        vm.startPrank(bob);
-        vm.expectRevert('NENOVAULT: NOT FUND MANAGER');
-        nenoVaultV01.transferToFundManager();
-        uint fundManagersBalAfter = neIDR.balanceOf(address(this));
-        // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        console.log(fundManagersBalAfter);
-        vm.stopPrank();
+//         vm.startPrank(bob);
+//         vm.expectRevert('NENOVAULT: NOT FUND MANAGER');
+//         nenoVaultV01.transferToFundManager();
+//         uint fundManagersBalAfter = neIDR.balanceOf(address(this));
+//         // uint fundManagersBalAfter = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         console.log(fundManagersBalAfter);
+//         vm.stopPrank();
 
-    }
+//     }
 
-    function testDepositWhenFundsAreUtilized() public{
-        uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        console.log(fundManagersBalBefore);
+//     function testDepositWhenFundsAreUtilized() public{
+//         uint fundManagersBalBefore = neIDR.balanceOf(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         console.log(fundManagersBalBefore);
 
-        vm.startPrank(alice);
-        neIDR.mint(one_million);
-        neIDR.approve(address(nenoVaultV01), one_million);
-        nenoVaultV01.deposit(one_million);
-        vm.stopPrank();
+//         vm.startPrank(alice);
+//         neIDR.mint(one_million);
+//         neIDR.approve(address(nenoVaultV01), one_million);
+//         nenoVaultV01.deposit(one_million);
+//         vm.stopPrank();
 
-        vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
-        nenoVaultV01.transferToFundManager();
-        neIDR.transfer(bob, one_million);
-        vm.stopPrank();
+//         vm.startPrank(0xC739B29c037808e3B9bB3d33d57F1cf0525d7445);
+//         nenoVaultV01.transferToFundManager();
+//         neIDR.transfer(bob, one_million);
+//         vm.stopPrank();
 
-        /* BLOCK BELOW REVERTS*/
+//         /* BLOCK BELOW REVERTS*/
 
-        // vm.startPrank(alice);
-        // neIDR.mint(one_million);
-        // neIDR.approve(address(nenoVaultV01), one_million);
-        // nenoVaultV01.deposit(one_million);
-        // vm.stopPrank();
+//         // vm.startPrank(alice);
+//         // neIDR.mint(one_million);
+//         // neIDR.approve(address(nenoVaultV01), one_million);
+//         // nenoVaultV01.deposit(one_million);
+//         // vm.stopPrank();
 
-    }
+//     }
 
-}
+// }
