@@ -5,44 +5,10 @@ import "forge-std/console.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-interface IEvent{
-    function initialize(address betToken, uint8 resultSize, uint256 eventStarts, uint256 eventEnds) external;
-}
-
-
-// contract Event{
-//     address public factory;
-//     address public admin;
-//     address public betToken;
-
-//     mapping(address => mapping(uint8 => uint256)) public userBet; //maps address to result to stake. Represents the shares of the stakes if the address wins
-//     mapping(uint8 => uint256) public potPerResult;
-
-//     uint256 public eventStarts;
-//     uint256 public eventEnds;
-
-//     constructor(){
-//         factory == msg.sender;
-//     }
-
-//     function initialize(address _betToken, uint8 _resultSize, uint256 _eventStarts, uint256 _eventEnds) external {
-//         admin = tx.origin;
-//         betToken = _betToken;
-//         for(uint8 i = 0; i < _resultSize; i++){
-//             potPerResult[i] = 0;
-//         }
-//         eventStarts = _eventStarts;
-//         eventEnds = _eventEnds;
-//     }
-
-// }
-
-
 
 contract EventFactoryV01 is Ownable{
     address public feeTo;
     address public feeToSetter;
-    // uint256 public eventIndex;
 
     struct Event{
         string name;
