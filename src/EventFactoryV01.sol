@@ -24,7 +24,7 @@ contract EventFactoryV01 is Ownable{
         uint8 outcome;
     }
 
-    Event[] allEvents;
+    Event[] public allEvents;
 
     constructor(address _feeToSetter){
         feeToSetter = _feeToSetter;
