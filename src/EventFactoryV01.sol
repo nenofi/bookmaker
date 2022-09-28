@@ -10,41 +10,55 @@ interface IEvent{
 }
 
 
-contract Event{
-    address public factory;
-    address public admin;
-    address public betToken;
+// contract Event{
+//     address public factory;
+//     address public admin;
+//     address public betToken;
 
-    mapping(address => mapping(uint8 => uint256)) public userBet; //maps address to result to stake. Represents the shares of the stakes if the address wins
-    mapping(uint8 => uint256) public potPerResult;
+//     mapping(address => mapping(uint8 => uint256)) public userBet; //maps address to result to stake. Represents the shares of the stakes if the address wins
+//     mapping(uint8 => uint256) public potPerResult;
 
-    uint256 public eventStarts;
-    uint256 public eventEnds;
+//     uint256 public eventStarts;
+//     uint256 public eventEnds;
 
-    constructor(){
-        factory == msg.sender;
-    }
+//     constructor(){
+//         factory == msg.sender;
+//     }
 
-    function initialize(address _betToken, uint8 _resultSize, uint256 _eventStarts, uint256 _eventEnds) external {
-        admin = tx.origin;
-        betToken = _betToken;
-        for(uint8 i = 0; i < _resultSize; i++){
-            potPerResult[i] = 0;
-        }
-        eventStarts = _eventStarts;
-        eventEnds = _eventEnds;
-    }
+//     function initialize(address _betToken, uint8 _resultSize, uint256 _eventStarts, uint256 _eventEnds) external {
+//         admin = tx.origin;
+//         betToken = _betToken;
+//         for(uint8 i = 0; i < _resultSize; i++){
+//             potPerResult[i] = 0;
+//         }
+//         eventStarts = _eventStarts;
+//         eventEnds = _eventEnds;
+//     }
 
-}
+// }
 
 
 
 contract EventFactoryV01 is Ownable{
     address public feeTo;
     address public feeToSetter;
+    // uint256 public eventIndex;
 
-    // mapping(uint256 => address) public getEvent;
-    address[] public allEvents;
+    struct Event{
+        string name;
+        address eventToken;
+        uint256 eventEnds;
+        uint256[] oddsPerOutcome;
+        uint8 winner;
+        bool claimable;
+    }
+
+    struct Bet{
+        uint256 eventId;
+        uint8 outcome;
+    }
+
+    Event[] allEvents;
 
     constructor(address _feeToSetter){
         feeToSetter = _feeToSetter;
@@ -54,15 +68,26 @@ contract EventFactoryV01 is Ownable{
         return allEvents.length;
     }
 
-    function createEvent(address _betToken, uint8 _resultSize, uint256 _eventStarts, uint256 _eventEnds) external returns(address ev){
-        bytes memory bytecode = type(Event).creationCode;
-        bytes32 salt = keccak256(abi.encodePacked(_betToken, _resultSize, _eventStarts, _eventEnds));
-        assembly {
-            ev := create2(0, add(bytecode, 32), mload(bytecode), salt)
-        }
+    function createEvent(
+        string memory _eventName,
+        address _eventToken, 
+        uint256 _eventEnds, 
+        uint256 _odds0,
+        uint256 _odds1,
+        uint256 _odds2,
+        uint8 _resultSize
+    ) external {
+        uint256[] memory newOdds = new uint256[](_resultSize);
+        newOdds[0] = _odds0;
+        newOdds[1] = _odds1;
+        newOdds[2] = _odds2;
+        Event memory newEvent = Event(_eventName, _eventToken, _eventEnds, newOdds, 0, false);
+        allEvents.push(newEvent);
+    }
 
-        IEvent(ev).initialize(_betToken, _resultSize, _eventStarts, _eventEnds);
-        allEvents.push(ev);
+
+    function getEvent(uint256 _index) external view returns (Event memory){
+        return allEvents[_index];
     }
 
     function setFeeTo(address _feeTo) onlyOwner external{

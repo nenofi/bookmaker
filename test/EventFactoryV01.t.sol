@@ -30,9 +30,17 @@ contract EventFactoryV01Test is Test{
         vm.stopPrank();
     }
 
+    // function testCreateEvent() public{
+    //     address newEvent = eventFactory.createEvent(address(neIDR), 3, block.timestamp, block.timestamp+1000);
+    //     assertEq(newEvent, eventFactory.allEvents(0));
+    // }
+
     function testCreateEvent() public{
-        address newEvent = eventFactory.createEvent(address(neIDR), 3, block.timestamp, block.timestamp+1000);
-        assertEq(newEvent, eventFactory.allEvents(0));
+        eventFactory.createEvent("Arsenal-Tottenham",address(neIDR), block.timestamp+1000, 204, 402, 342, 3);
+        console.log(eventFactory.getEvent(0).name);
+        // eventFactory.allEvents(0);
+        // assertEq(eventFactory.getEvent(0).name, "Arsenal-Tottenham");
+        // assertEq(eventFactory.eventIndex(), 1);
     }
 }
 
